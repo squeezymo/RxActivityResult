@@ -3,20 +3,27 @@ package rx_activity_result2;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 import io.reactivex.functions.Predicate;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 class ActivitiesLifecycleCallbacks {
     final Application application;
     volatile Activity liveActivityOrNull;
+    volatile Set<Activity> stackedActivities;
     Application.ActivityLifecycleCallbacks activityLifecycleCallbacks;
 
     public ActivitiesLifecycleCallbacks(Application application) {
         this.application = application;
+        this.stackedActivities = new HashSet<>();
         registerActivityLifeCycle();
     }
 
@@ -26,6 +33,7 @@ class ActivitiesLifecycleCallbacks {
         activityLifecycleCallbacks = new Application.ActivityLifecycleCallbacks() {
             @Override public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
                 liveActivityOrNull = activity;
+                stackedActivities.add(activity);
             }
 
             @Override public void onActivityStarted(Activity activity) {}
@@ -42,7 +50,9 @@ class ActivitiesLifecycleCallbacks {
 
             @Override public void onActivitySaveInstanceState(Activity activity, Bundle outState) {}
 
-            @Override public void onActivityDestroyed(Activity activity) {}
+            @Override public void onActivityDestroyed(Activity activity) {
+                stackedActivities.remove(activity);
+            }
         };
 
         application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks);
@@ -50,6 +60,16 @@ class ActivitiesLifecycleCallbacks {
 
     @Nullable Activity getLiveActivity() {
         return liveActivityOrNull;
+    }
+
+    @Nullable Activity findActivityOnStack(@NonNull Class clazz) {
+        for (final Activity activity : stackedActivities) {
+            if (activity.getClass() == clazz) {
+                return activity;
+            }
+        }
+
+        return null;
     }
 
     /**

@@ -105,16 +105,13 @@ public final class RxActivityResult {
             return new OnResult() {
                 @Override
                 public void response(int requestCode, int resultCode, Intent data) {
-                    if (activitiesLifecycle.getLiveActivity() == null) return;
+                    final Activity target = activitiesLifecycle.findActivityOnStack(clazz);
 
-                    //If true it means some other activity has been stacked as a secondary process.
-                    //Wait until the current activity be the target activity
-                    if (activitiesLifecycle.getLiveActivity().getClass() != clazz) {
+                    if (target == null) {
                         return;
                     }
 
-                    T activity = (T) activitiesLifecycle.getLiveActivity();
-                    subject.onNext(new Result<>(activity, requestCode, resultCode, data));
+                    subject.onNext(new Result<>((T) target, requestCode, resultCode, data));
                     subject.onComplete();
                 }
 
