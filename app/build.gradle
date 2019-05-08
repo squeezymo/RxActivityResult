@@ -1,25 +1,20 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 buildscript {
     repositories {
         mavenCentral()
         jcenter()
     }
-
-    dependencies {
-        classpath 'me.tatarka:gradle-retrolambda:3.2.4'
-    }
 }
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "io.victoralbertos.app"
         minSdkVersion 16
-        targetSdkVersion 24
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -40,33 +35,36 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(":rx_activity_result")
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(":rx_activity_result")
 
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
 
-    testCompile 'junit:junit:4.12'
-    androidTestCompile ("com.android.support.test:runner:0.4.1") {
+    implementation 'com.android.support:support-fragment:28.0.0'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.0"
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation ("com.android.support.test:runner:0.4.1") {
         exclude module: 'support-annotations'
     }
-    androidTestCompile ("com.android.support.test:rules:0.4.1") {
+    androidTestImplementation ("com.android.support.test:rules:0.4.1") {
         exclude module: 'support-annotations'
     }
 
-    androidTestCompile ("com.android.support.test.espresso:espresso-intents:2.2.1") {
-        exclude module: 'support-annotations'
-        exclude module: 'support-v4'
-        exclude module: 'support-v13'
-        exclude module: 'recyclerview-v7'
-    }
-
-    androidTestCompile ("com.android.support.test.espresso:espresso-contrib:2.2.1") {
+    androidTestImplementation ("com.android.support.test.espresso:espresso-intents:2.2.1") {
         exclude module: 'support-annotations'
         exclude module: 'support-v4'
         exclude module: 'support-v13'
         exclude module: 'recyclerview-v7'
     }
 
-    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
+    androidTestImplementation ("com.android.support.test.espresso:espresso-contrib:2.2.1") {
+        exclude module: 'support-annotations'
+        exclude module: 'support-v4'
+        exclude module: 'support-v13'
+        exclude module: 'recyclerview-v7'
+    }
+
+    androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
 }
